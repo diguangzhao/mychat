@@ -1,8 +1,75 @@
-body{
-	width: 100%;
-    text-align: center;
-    background-color: black;
-    color: white;
+body {
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-size: 14px;
+    line-height: 1.42857143;
+    color: #333;
+    background-color: #80c6f6;
+}
+.container {
+    background-color: #fff;	
+}
+.body-top {
+    height: 10%;
+    border-bottom: 1px solid #939298;
+    box-shadow: inset 2px 2px 15px 20px #939298
+}
+.body-box {
+    height: 80%;
 }
 
-.
+.body-bottom {
+    height: 10%;
+    background-color: #eee;
+}
+
+.top-title {
+	text-align: center;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.people-box {
+    border-right: 1px solid #999;
+    height: 100%;
+    text-align: center;
+}
+.live-owner {
+	height: 40%;
+}
+.live-owner-header {
+	height: 80%;
+	width: 100%;
+}
+.live-owner-info {
+	height: 20%;
+}
+.live-guest {
+    overflow-y: scroll;
+	height: 60%;
+}
+.message-box {
+    padding: 20px 5px 30px 5px;
+    height: 100%;
+    overflow-y: scroll;
+}
+.media-list {
+    clear: both;
+    position: relative;
+}
+.mine-message-item {
+	text-align: right;
+}
+.system-message-item {
+	text-align: center;
+}
+
+.message-form {
+    height: 100%;
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto; 
+    margin-top: 20px; 
+}
+.mine-card {
+    background-color: beige;
+}
