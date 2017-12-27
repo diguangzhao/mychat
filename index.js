@@ -2,10 +2,10 @@ var app = require('express')();
 var fs = require('fs')
 
 var http = require('http').Server(app);
-var https = require('https').Server({
-     key: fs.readFileSync('/home/ubuntu/nodepro/server.key'),
-     cert: fs.readFileSync('/home/ubuntu/nodepro/server.crt')
-},app);
+// var https = require('https').Server({
+//      key: fs.readFileSync('/home/ubuntu/nodepro/server.key'),
+//      cert: fs.readFileSync('/home/ubuntu/nodepro/server.crt')
+// },app);
 
 var redis = require('redis')
   ,REDIS_DNS = '172.17.42.1'
@@ -32,6 +32,9 @@ app.get('/', function(req, res){
 });
 app.get('/video*', function(req, res){
 	res.sendFile(__public + '/video.html');
+});
+app.get('/c*', function(req, res){
+  res.sendFile(__public + '/client.html');
 });
 
 app.get('/__bower/*', function(req, res){
@@ -92,6 +95,6 @@ var SSLPORT = process.env.SSLPORT || 3001
 http.listen(PORT, function(){
 	console.log('listening on *:' + PORT);
 });
-https.listen(SSLPORT, function(){
-	console.log('listening on *:' + SSLPORT);
-});
+// https.listen(SSLPORT, function(){
+// 	console.log('listening on *:' + SSLPORT);
+// });

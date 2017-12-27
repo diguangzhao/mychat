@@ -1,0 +1,154 @@
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Mychat</title>
+    <link rel="stylesheet" href="/__bower/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/__public/style.css">
+  </head>
+  <body>
+    <div class="container">
+      <div class="row body-top">
+        <div class="col-md-12 top-title">
+          <h2>Socket-Client</h2>
+        </div>
+      </div>
+      <div class="row body-box">
+        <div class="col-md-3 people-box">
+          <div class="live-owner">
+            <a href="#" class="live-owner-thumbnail">
+              <img class="live-owner-header" src="/__public/images/header1.jpg" alt="...">
+            </a>
+            <div class="live-owner-info">
+              <span class="live-owner-name">王大鹏</span>
+            </div>
+          </div>
+          <div class="live-guest">
+            <ul class="list-group" id="user_list">
+            </ul>
+          </div>
+        </div>
+        <div class="col-md-9">
+          <div class="message-box">
+            <ul class="media-list" id="message_list">
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="row body-bottom">
+        <div class="message-form">
+          <div class="input-group">
+            <input type="text" class="form-control" placeholder="Say You Want to Say!" aria-describedby="basic-addon2" id="messageValue">
+            <span class="input-group-addon" id="basic-addon2">
+              <input type="button" value="发送" id="sendMessage">
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+
+  <script src="/__bower/jquery/dist/jquery.min.js"></script>
+  <script src="/__bower/bootstrap/dist/js/bootstrap.min.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    $(document).ready(function(){
+
+      var socket = io('http://192.168.33.10:3002', {
+	  path: '/myownpath'
+	});
+      var username = prompt('输入您的昵称', '') 
+      var user_list = $("#user_list")
+      var INITED = false 
+      var message_list = $("#message_list")
+      console.log(0)
+      var _validName = function(username, note = "输入您的昵称") {
+        console.log(username)
+        if(username=="" || username==null){
+          username = prompt(note, '')
+          _validName(username) 
+        }
+        socket.emit('new user', { username: username });
+      }
+
+      var _adduser = function(msg) {
+        var mine = ''
+        if(msg.username == username) {
+          mine = ' mine-card'
+        }
+        var userItem = '<li class="list-group-item' + mine + '" id="user-' + msg.username + '"> <span class="badge"></span>'+ msg.username +'</li>'
+        user_list.append(userItem)
+      }
+
+      var _systemLog = function(msg) {
+        var message = '<li class="media system-message-item"><div class="media-body">  System Message： '+ msg.username +' 加入聊天室</div></li>';
+        message_list.append(message)
+      }
+
+      var _mineMessage = function(msg) {
+        var message = '<li class="media mine-message-item"><div class="media-body">' + msg.content + '</div><div class="media-right"><a href="#"><span class="badge">我</span></a> </div></li>'
+        message_list.append(message)
+      }
+
+      var _otherMessage = function(msg) {
+        var message = '<li class="media other-message-item"><a href="#"><span class="badge">' +msg.username + '</span></a><div class="media-body">' + msg.content + '</div><div class="media-right"> </div></li>'
+        message_list.append(message)
+      }
+
+      var _sendMessage = function(msg) {
+        socket.emit('send message', {
+          username: username,
+          content: msg
+        })
+      }
+
+      socket.on('user init', function(users){
+        console.log(1)
+        for(userKey in users) {
+          _adduser({username:users[userKey]})
+        }
+        socket.removeAllListeners('user init');
+      })
+      socket.emit('user init')
+      $("#sendMessage").on('click', function(){
+        var msgNode = $("#messageValue")
+        var msg = msgNode.val()
+        if (msg != "" && msg != undefined) {
+          _sendMessage(msg)
+          msgNode.val('')
+        }
+      })
+      $(document).keyup(function(event){
+        if(event.keyCode ==13){
+          $("#sendMessage").trigger("click");
+        }
+      });
+      console.log(2)
+      _validName(username)
+
+      socket.on('add user', function(data) {
+        console.log(3)
+        _adduser(data)
+        _systemLog(data)
+      })
+
+      socket.on('new message', function(data) {
+        if (data.username == username) {
+          _mineMessage(data)
+        } else {
+          _otherMessage(data)
+        }
+      })
+
+      socket.on('has user', function(data) {
+        console.log(4)
+        username = null
+        _validName(username, '昵称：' + data.username + ' 已被占用，请重新输入')
+      })
+
+      socket.on('test', function(data) {
+        // console.log(data)
+      })
+    })
+  </script>
+</html>
+
